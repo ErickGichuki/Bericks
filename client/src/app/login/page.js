@@ -1,43 +1,62 @@
 import React from "react";
 
-function page() {
+function SignInPage() {
   return (
-    <div className="py-20">
-      <div className="flex flex-col md:flex-row">
-        <div className="md:w-1/2 pt-10 px-10">
-          <h2 className="font-bold text-xl">Sign In To Bericks</h2>
-          <div className="flex flex-col space-y-3 py-4">
+    <div className="flex flex-col items-center justify-center min-h-screen py-10 bg-gray-50">
+      <div className="flex flex-col md:flex-row bg-white rounded-lg shadow-lg overflow-hidden md:w-3/4 lg:w-2/3">
+        {/* Left Section: Sign In Form */}
+        <div className="md:w-1/2 p-10">
+          <h2 className="font-bold text-2xl text-gray-800 mb-6">
+            Sign In To Bericks
+          </h2>
+          <div className="flex flex-col space-y-3 mb-6">
             <a href="#">
-              <button className="bg-gray-200 px-10 py-3 rounded-md">
-                Sign with google
+              <button className="bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600 transition">
+                Sign in with Google
               </button>
             </a>
             <a href="#">
-              <button className="bg-gray-200 px-10 py-3 rounded-md">
-                Sign with Twitter
+              <button className="bg-blue-400 text-white px-6 py-3 rounded-md hover:bg-blue-500 transition">
+                Sign in with Twitter
               </button>
             </a>
           </div>
-          <p className="font-bold text-gray-300">----------or--------------</p>
-          <form className="">
-            <div className="flex flex-col">
+          <p className="text-gray-500 text-center font-semibold mb-6">or</p>
+          <form>
+            <div className="flex flex-col space-y-4">
               <input
-                className="bg-gray-200 px-3 py-3 rounded-md"
+                type="email"
+                className="bg-gray-200 px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Email"
               />
               <input
-                className="bg-gray-200 px-3 py-3 rounded-md"
+                type="password"
+                className="bg-gray-200 px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Password"
               />
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-4 py-3 rounded-md hover:bg-blue-700 transition font-semibold"
+              >
+                Sign In
+              </button>
             </div>
           </form>
         </div>
-        <div className="md:w-1/2">
-          <h2>Image</h2>
+
+        {/* Right Section: Image */}
+        <div
+          className="md:w-1/2 bg-cover bg-center"
+          style={{ backgroundImage: "url('your-image-url.jpg')" }}
+        >
+          {/* You can add an actual image or background image here */}
+          <h2 className="text-center text-white font-bold text-2xl p-10">
+            Welcome Back!
+          </h2>
         </div>
       </div>
     </div>
   );
 }
 
-export default page;
+export default SignInPage;
