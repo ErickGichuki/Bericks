@@ -41,6 +41,10 @@ INSTALLED_APPS = [
     'rest_framework',
     'users',
     'rest_framework.authtoken',
+    'corsheaders',
+    'oauth2_provider',
+    'social_django',
+    'rest_framework_social_oauth2',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +55,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 REST_FRAMEWORK = {
@@ -60,6 +66,10 @@ REST_FRAMEWORK = {
 }
 
 ROOT_URLCONF = 'bericks_backend.urls'
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
 
 TEMPLATES = [
     {
@@ -79,6 +89,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bericks_backend.wsgi.application'
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOpenIdConnect',
+    'social_core.backends.google.GoogleOAuth2',
+    'social_core.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'YOUR_GOOGLE_CLIENT_ID'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'YOUR_GOOGLE_CLIENT_SECRET'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
