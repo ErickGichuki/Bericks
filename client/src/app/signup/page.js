@@ -20,14 +20,11 @@ function SignUpPage() {
     }
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/users/register/",
-        {
-          username,
-          email,
-          password,
-        }
-      );
+      const response = await axios.post("/api/users/register/", {
+        username,
+        email,
+        password,
+      });
 
       if (response.status === 201) {
         // Registration successful
@@ -38,12 +35,20 @@ function SignUpPage() {
         setEmail("");
         setPassword("");
         setConfirmPassword("");
+
+        setTimeout(() => {
+          setSuccessMessage("");
+        }, 2000);
       }
     } catch (err) {
       // Handle error
       setError("Registration failed. Please try again.");
       setSuccessMessage("");
       console.error(err.response?.data || err.message);
+
+      setTimeout(() => {
+        setError("");
+      }, 2000);
     }
   };
 
