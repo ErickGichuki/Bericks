@@ -34,6 +34,10 @@ function SignInPage() {
                 className="bg-gray-200 px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Password"
               />
+
+              <div className="justify-center">
+                <p>Forgot password?</p>
+              </div>
               <button
                 type="submit"
                 className="bg-blue-600 text-white px-4 py-3 rounded-md hover:bg-blue-700 transition font-semibold"

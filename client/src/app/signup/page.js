@@ -1,136 +1,207 @@
-"use client";
+"use client"; // This directive is important for a client-side component in Next.js
 import React, { useState } from "react";
-import Image from "next/image";
-import axios from "axios";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useRouter } from "next/navigation"; // Ensure this import is correct
 
-function SignUpPage() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+function Signup() {
+  const [message, setMessage] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState(false);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const router = useRouter(); // Use the Next.js router
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
-      return;
-    }
+  const formik = useFormik({
+    initialValues: {
+      fullName: "",
+      phoneNumber: "",
+      email: "",
+      address: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema: Yup.object({
+      fullName: Yup.string().required("Full Name is required"),
+      phoneNumber: Yup.string().required("Phone Number is required"),
+      email: Yup.string()
+        .email("Invalid email address")
+        .required("Email Address is required"),
+      address: Yup.string().required("Address is required"),
+      password: Yup.string()
+        .min(8, "Password must be at least 8 characters")
+        .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
+        .matches(/[a-z]/, "Password must contain at least one lowercase letter")
+        .matches(/[0-9]/, "Password must contain at least one number")
+        .matches(
+          /[@$!%*?&]/,
+          "Password must contain at least one special character: @$!%*?&"
+        )
+        .required("Password is required"),
+      confirmPassword: Yup.string()
+        .oneOf([Yup.ref("password"), null], "Passwords must match")
+        .required("Confirm Password is required"),
+    }),
+    onSubmit: async (values) => {
+      try {
+        // Handle user signup logic here (e.g., API call to your backend)
+        // For example, you can send the data to your backend
+        // await apiSignup(values);
 
-    try {
-      const response = await axios.post("/api/users/register/", {
-        username,
-        email,
-        password,
-      });
-
-      if (response.status === 201) {
-        // Registration successful
-        setSuccessMessage("Registration successful! Please log in.");
-        setError("");
-        // Optionally clear form or redirect here
-        setUsername("");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-
+        setMessage("Account created successfully");
+        formik.resetForm();
         setTimeout(() => {
-          setSuccessMessage("");
-        }, 2000);
+          setMessage(null);
+        }, 1500);
+        router.push("/login"); // Use router.push instead of nav
+      } catch (error) {
+        setMessage("Signup failed");
       }
-    } catch (err) {
-      // Handle error
-      setError("Registration failed. Please try again.");
-      setSuccessMessage("");
-      console.error(err.response?.data || err.message);
+    },
+  });
 
-      setTimeout(() => {
-        setError("");
-      }, 2000);
-    }
+  const toggleShowPassword = () => {
+    setShowPassword((prevState) => !prevState);
+  };
+
+  const toggleShowConfirmPassword = () => {
+    setConfirmPassword((prevState) => !prevState);
   };
 
   return (
-    <div className="py-20 px-10 bg-gray-50 min-h-screen flex items-center justify-center">
-      <div className="flex flex-col md:flex-row bg-white rounded-lg shadow-lg overflow-hidden md:w-3/4 lg:w-2/3">
-        <div className="md:w-1/2 pt-10 m-2">
-          <h2 className="font-bold text-2xl mb-6 text-gray-800">
-            Sign up for Bericks
-          </h2>
-          <form className="space-y-6" onSubmit={handleSubmit}>
+    <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-lg py-16">
+      <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <h2 className="text-2xl text-center mb-6">
+          Welcome to Bericks Designs
+        </h2>
+        {message && (
+          <p
+            className={
+              message === "Account created successfully"
+                ? "text-green-500 text-center mb-4"
+                : "text-red-500 text-center mb-4"
+            }
+          >
+            {message}
+          </p>
+        )}
+        <form onSubmit={formik.handleSubmit} className="space-y-6">
+          <div>
             <input
               type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full py-2 border border-gray-300 rounded px-4 focus:outline-none focus:ring-2 focus:ring-purple-600"
+              name="fullName"
+              placeholder="Full Name"
+              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.fullName}
             />
-            <input
-              type="text"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full py-2 border border-gray-300 rounded px-4 focus:outline-none focus:ring-2 focus:ring-purple-600"
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full py-2 border border-gray-300 rounded px-4 focus:outline-none focus:ring-2 focus:ring-purple-600"
-            />
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full py-2 border border-gray-300 rounded px-4 focus:outline-none focus:ring-2 focus:ring-purple-600"
-            />
-            {error && <p className="text-red-500">{error}</p>}
-            {successMessage && (
-              <p className="text-green-500">{successMessage}</p>
+            {formik.touched.fullName && formik.errors.fullName && (
+              <p className="text-red-500 text-sm">{formik.errors.fullName}</p>
             )}
+          </div>
+          <div>
+            <input
+              type="tel"
+              name="phoneNumber"
+              placeholder="Phone Number"
+              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.phoneNumber}
+            />
+            {formik.touched.phoneNumber && formik.errors.phoneNumber && (
+              <p className="text-red-500 text-sm">
+                {formik.errors.phoneNumber}
+              </p>
+            )}
+          </div>
+          <div>
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.email}
+            />
+            {formik.touched.email && formik.errors.email && (
+              <p className="text-red-500 text-sm">{formik.errors.email}</p>
+            )}
+          </div>
+          <div>
+            <input
+              type="text"
+              name="address"
+              placeholder="Address"
+              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.address}
+            />
+            {formik.touched.address && formik.errors.address && (
+              <p className="text-red-500 text-sm">{formik.errors.address}</p>
+            )}
+          </div>
+          <div className="mb-4 relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              placeholder="Enter your password"
+              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.password}
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center leading-5"
+              onClick={toggleShowPassword}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+            {formik.touched.password && formik.errors.password && (
+              <p className="text-red-500 text-sm">{formik.errors.password}</p>
+            )}
+          </div>
+          <div className="mb-4 relative">
+            <input
+              type={confirmPassword ? "text" : "password"}
+              name="confirmPassword"
+              placeholder="Confirm your password"
+              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.confirmPassword}
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center leading-5"
+              onClick={toggleShowConfirmPassword}
+              aria-label={confirmPassword ? "Hide password" : "Show password"}
+            >
+              {confirmPassword ? "Hide" : "Show"}
+            </button>
+            {formik.touched.confirmPassword &&
+              formik.errors.confirmPassword && (
+                <p className="text-red-500 text-sm">
+                  {formik.errors.confirmPassword}
+                </p>
+              )}
+          </div>
+          <div>
             <button
               type="submit"
-              className="py-3 bg-purple-600 text-white w-full rounded-md hover:bg-purple-800 flex items-center justify-center"
+              className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
             >
-              <Image
-                src="/login.png"
-                alt="login"
-                width={30}
-                height={20}
-                className="mr-2 bg-white"
-              />
               Sign Up
             </button>
-          </form>
-          <div className="py-8 text-center">
-            <h3 className="text-gray-600 mb-4">Or signup with</h3>
-            <div className="space-x-4">
-              <button className="px-4 py-2 border rounded-md bg-red-600 text-white hover:bg-red-700 transition">
-                Google
-              </button>
-              <button className="px-4 py-2 border rounded-md bg-blue-700 text-white hover:bg-blue-800 transition">
-                Facebook
-              </button>
-            </div>
           </div>
-        </div>
-        <div className="md:w-1/2 bg-blue-100 flex flex-col items-center justify-center p-10">
-          <h2 className="font-bold">Welcome to Bericks</h2>
-          <Image
-            src="/contact.jpg"
-            alt="Contact"
-            width={400}
-            height={100}
-            className=""
-          />
-        </div>
+        </form>
       </div>
     </div>
   );
 }
 
-export default SignUpPage;
+export default Signup;
