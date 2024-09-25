@@ -1,6 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
 
 @keyframes upDown {
   0%, 100% {
@@ -14,3 +16,18 @@
 .up-down {
   animation: upDown 3s ease-in-out infinite;
 }
+
+
+.testimonial-container {
+  background-color: #f7fafc; /* Light gray background */
+}
+
+.testimonial-slide {
+  max-width: 80%; /* Adjust to your preference */
+  margin: auto;
+}
+
+.testimonial-slide img {
+  border: 2px solid;
+}
+
